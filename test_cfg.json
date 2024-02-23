@@ -1,0 +1,14 @@
+{
+    "test_number_to_have_the_conversation_with":"",
+    "ngrok_config":{
+        "domain": "",
+        "authtoken": ""
+    },
+    "whatsapp_config":{
+        "facebook_app_secret":"",
+        "verify_token": "",
+        "number": "",
+        "whatsapp_business_account_id": "",
+        "access_token": ""
+    } 
+}
