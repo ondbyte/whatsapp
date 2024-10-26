@@ -155,7 +155,7 @@ func TestWhatsapp(t *testing.T) {
 	conversation := wa.StartConversation(usrNumber)
 	fmt.Println("expecting the message to be a 'test' to begin the test, send 'test' to ", testCfg.WhatsappCfg.Number)
 	for {
-		evt := conversation.NextEvent()
+		evt := <-conversation.NextEvent()
 		if txtMsg, ok := evt.TextMessage(); ok && strings.ToLower(txtMsg.Body) == "test" {
 			// first text msg from the user is test
 			// so you should begin the test
@@ -173,7 +173,7 @@ func TestWhatsapp(t *testing.T) {
 	}
 
 	for {
-		reply := conversation.NextEvent()
+		reply := <-conversation.NextEvent()
 		if _, isStatusUpdate := reply.Status(); isStatusUpdate {
 			continue
 		}
@@ -203,7 +203,7 @@ func TestWhatsapp(t *testing.T) {
 		return
 	}
 	for {
-		reply := conversation.NextEvent()
+		reply := <-conversation.NextEvent()
 		if _, isStatusUpdate := reply.Status(); isStatusUpdate {
 			continue
 		}
@@ -231,7 +231,7 @@ func TestWhatsapp(t *testing.T) {
 		return
 	}
 	for {
-		reply := conversation.NextEvent()
+		reply := <-conversation.NextEvent()
 		if _, isStatusUpdate := reply.Status(); isStatusUpdate {
 			continue
 		}
@@ -272,7 +272,7 @@ func TestWhatsapp(t *testing.T) {
 		return
 	}
 	for {
-		reply := conversation.NextEvent()
+		reply := <-conversation.NextEvent()
 		if _, isStatusUpdate := reply.Status(); isStatusUpdate {
 			continue
 		}
@@ -312,7 +312,7 @@ func TestWhatsapp(t *testing.T) {
 		return
 	}
 	for {
-		reply := conversation.NextEvent()
+		reply := <-conversation.NextEvent()
 		if _, isStatusUpdate := reply.Status(); isStatusUpdate {
 			continue
 		}

@@ -16,8 +16,8 @@ type Conversation struct {
 }
 
 // wait for the next msg from the user
-func (c *Conversation) NextEvent() *event.WhatsAppBusinessAccount {
-	return <-c.receive
+func (c *Conversation) NextEvent() chan *event.WhatsAppBusinessAccount {
+	return c.receive
 }
 
 // send text msg to the user
