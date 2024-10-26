@@ -15,6 +15,11 @@ type Conversation struct {
 	end     ender
 }
 
+// waid
+func (c *Conversation) WaId() string {
+	return c.waId
+}
+
 // wait for the next msg from the user
 func (c *Conversation) NextEvent() chan *event.WhatsAppBusinessAccount {
 	return c.receive
