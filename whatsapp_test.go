@@ -108,21 +108,44 @@ func eventToMsgContacts(contacts event.Contacts) (contacts2 message.Contacts) {
 	return
 }
 
-func TestWhatsapp(t *testing.T) {
-	assert := assert.New(t)
+func loadCfg() (*TestConfig, error) {
 	testCfgPath := "./test_cfg.json"
 	testCfgFileData, err := os.ReadFile(testCfgPath)
-	if !assert.NoError(err, "error opening whatsapp cfg file for testing whatsapp, ", err) {
-		return
-	}
 	testCfg := &TestConfig{}
 	err = json.Unmarshal(testCfgFileData, testCfg)
-	if !assert.NoError(err, "error unmarshalling test cfg file for testing whatsapp, ", err) {
+	return testCfg, err
+}
+
+func TestCTA(t *testing.T) {
+	assert := assert.New(t)
+	cfg, err := loadCfg()
+	assert.NoError(err, `err while loadCfg`)
+	wa, err := whatsapp.New(cfg.WhatsappCfg)
+	if !assert.NoError(err) {
 		return
 	}
-	wa, err := whatsapp.New(whatsapp.Config{
-		// set all the configuration
-	})
+	if !assert.NotEmpty(wa.PhoneNumberId) {
+		return
+	}
+	convo := wa.StartConversation(cfg.TestNumberToHaveTheConversationWith)
+
+	convo.NextEvent()
+
+	_, err = convo.SendInteractive(
+		message.NewInteractiveWithCtaButton(
+			message.NewTextHeader(`Hello how are you`),
+			message.NewBody(`Yadhunandan haha haha`),
+			nil,
+			message.NewActionWithCTAButton(`Yeah`, `https://stackoverflow.com/questions/11100155/invalid-oauth-access-token-when-using-an-application-access-token-android`),
+		),
+	)
+	assert.NoError(err, `err while sending msg`, err)
+}
+func TestWhatsapp(t *testing.T) {
+	assert := assert.New(t)
+	cfg, err := loadCfg()
+	assert.NoError(err, `err while loadCfg`)
+	wa, err := whatsapp.New(cfg.WhatsappCfg)
 	if !assert.NoError(err) {
 		return
 	}
@@ -142,7 +165,7 @@ func TestWhatsapp(t *testing.T) {
 	listeningPath := "/whatsapp_events_2"
 	handler.HandleFunc(listeningPath, wa.WhatsappEvents)
 	// to listen to incoming msg events start a server
-	server, err := ngrok.NewWithDomain(context.TODO(), testCfg.NgrokCfg.AuthToken, testCfg.NgrokCfg.Domain)
+	server, err := ngrok.NewWithDomain(context.TODO(), cfg.NgrokCfg.AuthToken, cfg.NgrokCfg.Domain)
 	if !assert.NoError(err, "error while starting a ngrok server ") {
 		return
 	}
@@ -151,9 +174,11 @@ func TestWhatsapp(t *testing.T) {
 		server.Serve(":8008", handler)
 	}()
 
-	usrNumber := testCfg.TestNumberToHaveTheConversationWith
+	usrNumber := cfg.TestNumberToHaveTheConversationWith
 	conversation := wa.StartConversation(usrNumber)
-	fmt.Println("expecting the message to be a 'test' to begin the test, send 'test' to ", testCfg.WhatsappCfg.Number)
+	_, err = conversation.SendText(`Hi..`, false)
+	assert.NoError(err, `expected no error while sending the first msg`)
+	fmt.Println("expecting the message to be a 'test' to begin the test, send 'test' to ", cfg.WhatsappCfg.Number)
 	for {
 		evt := <-conversation.NextEvent()
 		if txtMsg, ok := evt.TextMessage(); ok && strings.ToLower(txtMsg.Body) == "test" {

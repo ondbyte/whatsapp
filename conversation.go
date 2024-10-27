@@ -65,6 +65,11 @@ func (c *Conversation) SendSticker(cs *message.Sticker) (*SendMessageResponse, e
 	return c.send(message.NewStickerMsg(c.waId, cs))
 }
 
+// send sticker msg to the user
+func (c *Conversation) SendInteractive(interactive *message.Interactive) (*SendMessageResponse, error) {
+	return c.send(message.NewInteractiveMessage(c.waId, interactive))
+}
+
 // ends the conversation, after this any messages will be diverted to the main whatsapp messages listener
 func (c *Conversation) End() {
 	c.end()

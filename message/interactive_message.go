@@ -93,8 +93,25 @@ func NewFooter(text string) *Footer {
 	}
 }
 
+type Parameters struct {
+	DisplayText string `json:"display_text"`
+	Url         string `json:"url"`
+}
+
 type Action struct {
-	Buttons []*Button `json:"buttons"`
+	Buttons    []*Button  `json:"buttons,omitempty"`
+	Name       string     `json:"name,omitempty"`
+	Parameters Parameters `json:"parameters,omitempty"`
+}
+
+func NewActionWithCTAButton(displayText, ctaUrl string) *Action {
+	return &Action{
+		Name: "cta_url",
+		Parameters: Parameters{
+			DisplayText: displayText,
+			Url:         ctaUrl,
+		},
+	}
 }
 
 func NewActionWithButtons(buttons []*Button) *Action {
@@ -110,10 +127,11 @@ var (
 )
 
 var (
-	BUTTON InteractiveMessageType = "button"
+	BUTTON  InteractiveMessageType = "button"
+	CTA_URL InteractiveMessageType = "cta_url"
 )
 
-type InteractiveMessage struct {
+type Interactive struct {
 	Type   InteractiveMessageType `json:"type"`
 	Body   *Body                  `json:"body"`
 	Action *Action                `json:"action"`
@@ -121,29 +139,50 @@ type InteractiveMessage struct {
 	Header *Header                `json:"header"`
 }
 
-func NewInteractiveMessageWithButtons(
-	to string,
+func NewInteractivWithButtons(
 	header *Header,
 	body *Body,
 	footer *Footer,
 	buttons []*Button,
-) *Message {
+) *Interactive {
 	if len(buttons) > 3 {
 		fmt.Printf("maximum of 3 buttons allowed but you have passed %v for NewInteractiveMessageWithButtons, try using list messages\n", len(buttons))
 	}
+	return &Interactive{
+		Type:   BUTTON,
+		Header: header,
+		Body:   body,
+		Footer: footer,
+		Action: &Action{
+			Buttons: buttons,
+		},
+	}
+}
+
+func NewInteractiveWithCtaButton(
+	header *Header,
+	body *Body,
+	footer *Footer,
+	ctaAction *Action,
+) *Interactive {
+	return &Interactive{
+		Type:   CTA_URL,
+		Header: header,
+		Body:   body,
+		Footer: footer,
+		Action: ctaAction,
+	}
+}
+
+func NewInteractiveMessage(
+	to string,
+	interactive *Interactive,
+) *Message {
 	return &Message{
 		MessagingProduct: WHATSAPP,
 		RecipientType:    INDIVIDUAL,
 		To:               to,
 		Type:             INTERACTIVE,
-		Interactive: &InteractiveMessage{
-			Type:   BUTTON,
-			Header: header,
-			Body:   body,
-			Footer: footer,
-			Action: &Action{
-				Buttons: buttons,
-			},
-		},
+		Interactive:      interactive,
 	}
 }

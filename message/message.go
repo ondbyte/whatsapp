@@ -27,23 +27,23 @@ func NewReplyMsg(wamIdOfTheMsgToReplyTo string, msg Message) Message {
 	return msg
 }
 
-// Message represents the overall structure for the provided JSON
+// Message is any message you send to users
 type Message struct {
-	MessagingProduct MessagingProduct    `json:"messaging_product,omitempty"`
-	RecipientType    RecipientType       `json:"recipient_type,omitempty"`
-	To               string              `json:"to,omitempty"`
-	Context          *context            `json:"context,omitempty"`
-	Type             MessageType         `json:"type,omitempty"`
-	Text             *TextMessage        `json:"text,omitempty"`
-	Reaction         *Reaction           `json:"reaction,omitempty"`
-	Image            *Image              `json:"image,omitempty"`
-	Video            *Video              `json:"video,omitempty"`
-	Audio            *Audio              `json:"audio,omitempty"`
-	Document         *Document           `json:"document,omitempty"`
-	Sticker          *Sticker            `json:"sticker,omitempty"`
-	Location         *Location           `json:"location,omitempty"`
-	Contacts         Contacts            `json:"contacts,omitempty"`
-	Interactive      *InteractiveMessage `json:"interactive,omitempty"`
+	MessagingProduct MessagingProduct `json:"messaging_product,omitempty"`
+	RecipientType    RecipientType    `json:"recipient_type,omitempty"`
+	To               string           `json:"to,omitempty"`
+	Context          *context         `json:"context,omitempty"`
+	Type             MessageType      `json:"type,omitempty"`
+	Text             *TextMessage     `json:"text,omitempty"`
+	Reaction         *Reaction        `json:"reaction,omitempty"`
+	Image            *Image           `json:"image,omitempty"`
+	Video            *Video           `json:"video,omitempty"`
+	Audio            *Audio           `json:"audio,omitempty"`
+	Document         *Document        `json:"document,omitempty"`
+	Sticker          *Sticker         `json:"sticker,omitempty"`
+	Location         *Location        `json:"location,omitempty"`
+	Contacts         Contacts         `json:"contacts,omitempty"`
+	Interactive      *Interactive     `json:"interactive,omitempty"`
 }
 
 // NewMessage is a constructor function for creating a new message instance.
@@ -61,7 +61,7 @@ func NewMessage(
 	sticker *Sticker,
 	location *Location,
 	contacts Contacts,
-	interactive *InteractiveMessage,
+	interactive *Interactive,
 ) *Message {
 	return &Message{
 		MessagingProduct: messagingProduct,

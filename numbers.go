@@ -61,6 +61,6 @@ func (w *Whatsapp) useNumber(number string) error {
 		return fmt.Errorf("number %v isn't available with WABA", number)
 	}
 	w.PhoneNumberId = num.ID
-	fmt.Printf("Using phone number %v with id %v\n", number, num.ID)
+	fmt.Printf("using phone number %v with id %v\n", number, num.ID)
 	return nil
 }
